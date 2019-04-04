@@ -17,7 +17,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 #SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 scope = ['https://spreadsheets.google.com/feeds']
 
-client = gspread.authorize(creds)
+
 
 # The ID and range of a sample spreadsheet.
 SPREADSHEET_ID = '1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8'
@@ -31,6 +31,7 @@ class googlesheets:
 		"""
 		#creds = None
 		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		client = gspread.authorize(creds)
 		# The file token.pickle stores the user's access and refresh tokens, and is
 		# created automatically when the authorization flow completes for the first
 		# time.
