@@ -1,0 +1,9 @@
+django
+gunicorn
+django-heroku
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+asyncio
+setuptools
+https://github.com/Rapptz/discord.py/archive/async.zip#egg=discord.py
