@@ -524,69 +524,72 @@ class rankeds(commands.Cog):
 		if int(author.id) in compsdict.keys():
 			me = compsdict[int(author.id)]
 			cha = me.gamesarray[matchid-1]
-			if result == 'win':
-				matchres = True
-			elif result == 'lose':
-				matchres = False
-			else:
-				await ctx.send('Invalid result. Result can only either be win or lose')
-				matchres = None
-			if matchres is not None:
-				tmprolew = cha.challenger.ranktorole(ctx.channel)
-				tmprolel = cha.challenged.ranktorole(ctx.channel)
-				test = cha.updateresult(matchres, int(author.id))
-				if matchres is True:
-					wonlose = 'won'
+			if cha.GameDate != None:
+				if result == 'win':
+					matchres = True
+				elif result == 'lose':
+					matchres = False
 				else:
-					wonlose = 'lost'
-				await ctx.send ('{0.name}, match result reported. You '.format(author) + wonlose + '.')
-				if test == 0:	
-					winner = None
-					loser = None
-					w1 = None
-					l1 = None
-					if cha.result is True:
-						w1 = cha.challenger
-						l1 = cha.challenged
-						winner = discord.utils.find(lambda m: m.id == cha.challenger.id, ctx.channel.guild.members)
-						loser = discord.utils.find(lambda m: m.id == cha.challenged.id, ctx.channel.guild.members)
+					await ctx.send('Invalid result. Result can only either be win or lose')
+					matchres = None
+				if matchres is not None:
+					tmprolew = cha.challenger.ranktorole(ctx.channel)
+					tmprolel = cha.challenged.ranktorole(ctx.channel)
+					test = cha.updateresult(matchres, int(author.id))
+					if matchres is True:
+						wonlose = 'won'
 					else:
-						w1 = cha.challenged
-						l1 = cha.challenger
-						winner = discord.utils.find(lambda m: m.id == cha.challenged.id, ctx.channel.guild.members)
-						loser = discord.utils.find(lambda m: m.id == cha.challenger.id, ctx.channel.guild.members)
-					await ctx.send ('Match result recorded. {0.name} won againt {1.name}'.format(winner, loser))
+						wonlose = 'lost'
+					await ctx.send ('{0.name}, match result reported. You '.format(author) + wonlose + '.')
+					if test == 0:	
+						winner = None
+						loser = None
+						w1 = None
+						l1 = None
+						if cha.result is True:
+							w1 = cha.challenger
+							l1 = cha.challenged
+							winner = discord.utils.find(lambda m: m.id == cha.challenger.id, ctx.channel.guild.members)
+							loser = discord.utils.find(lambda m: m.id == cha.challenged.id, ctx.channel.guild.members)
+						else:
+							w1 = cha.challenged
+							l1 = cha.challenger
+							winner = discord.utils.find(lambda m: m.id == cha.challenged.id, ctx.channel.guild.members)
+							loser = discord.utils.find(lambda m: m.id == cha.challenger.id, ctx.channel.guild.members)
+						await ctx.send ('Match result recorded. {0.name} won againt {1.name}'.format(winner, loser))
+						
+						cha.challenger.updatelastop(int(cha.challenged.id))
+						cha.challenged.updatelastop(int(cha.challenger.id))
+						
+						cha.challenger.decrementwarn()
+						cha.challenged.decrementwarn()
+						
+						
+						spreadsheet.updatecomps(cha.challenged)
+						spreadsheet.updatecomps(cha.challenger)
+						if winner is not None and w1 is not None and w1.rank != w1.oldrank:
+							role = w1.ranktorole(ctx.channel)
+							await winner.remove_roles(tmprolew, tmprolel)
+							await winner.add_roles(role)
+						if loser is not None and l1 is not None and l1.rank != l1.oldrank:
+							role = l1.ranktorole(ctx.channel)
+							await loser.remove_roles(tmprolew, tmprolel)
+							await loser.add_roles(role)
+						
+						spreadsheet.removecha(cha)
+						
+						for i,v in enumerate(challenges):
+							if cha == v:
+								del challenges[i]
+								break
 					
-					cha.challenger.updatelastop(int(cha.challenged.id))
-					cha.challenged.updatelastop(int(cha.challenger.id))
-					
-					cha.challenger.decrementwarn()
-					cha.challenged.decrementwarn()
-					
-					
-					spreadsheet.updatecomps(cha.challenged)
-					spreadsheet.updatecomps(cha.challenger)
-					if winner is not None and w1 is not None and w1.rank != w1.oldrank:
-						role = w1.ranktorole(ctx.channel)
-						await winner.remove_roles(tmprolew, tmprolel)
-						await winner.add_roles(role)
-					if loser is not None and l1 is not None and l1.rank != l1.oldrank:
-						role = l1.ranktorole(ctx.channel)
-						await loser.remove_roles(tmprolew, tmprolel)
-						await loser.add_roles(role)
-					
-					spreadsheet.removecha(cha)
-					
-					for i,v in enumerate(challenges):
-						if cha == v:
-							del challenges[i]
-							break
-				
-				elif test == -1:
-					await ctx.send ('Match result incoherent between two players. {0.mention} and {1.mention}, one has to win and one has to lose. Please report correctly'.format(discord.utils.find(lambda m: m.id == cha.challenger.id, ctx.channel.guild.members), discord.utils.find(lambda m: m.id == cha.challenged.id, ctx.channel.guild.members)))
-					spreadsheet.updatecha(cha)
-				else:
-					spreadsheet.updatecha(cha)
+					elif test == -1:
+						await ctx.send ('Match result incoherent between two players. {0.mention} and {1.mention}, one has to win and one has to lose. Please report correctly'.format(discord.utils.find(lambda m: m.id == cha.challenger.id, ctx.channel.guild.members), discord.utils.find(lambda m: m.id == cha.challenged.id, ctx.channel.guild.members)))
+						spreadsheet.updatecha(cha)
+					else:
+						spreadsheet.updatecha(cha)
+			else:
+				await ctx.send('{0.name}, that game was not accepted yet. You can\'t report an unaccepted game'.format(author))
 		else:
 			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author))
 		
