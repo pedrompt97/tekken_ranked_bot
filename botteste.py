@@ -20,7 +20,7 @@ description = "Hello, I am RankedBot v" + tkrankversionNumber + " by Tugaviciado
 tfile = open("token.txt")
 TOKEN = tfile.read()
 
-bot = commands.Bot(command_prefix='r!', description=description, help_command = None)
+bot = commands.Bot(command_prefix='r!', description=description)
 
 compsdict = {}
 challenges = []
