@@ -1,2 +1,1 @@
-npm start -Dserver.port=$PORT
-web: python botteste.py
+worker: python botteste.py
