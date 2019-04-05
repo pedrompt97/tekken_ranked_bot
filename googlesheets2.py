@@ -78,12 +78,13 @@ class googlesheets2:
 		# Call the Sheets API
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
 		result = sheet.values_get(COMPS_RANGE_NAME)
-		values = result['values']
+		
 		
 		compsdict = {}
-		if not values:
+		if not result:
 			print('Competitors: No data found.')
 		else:
+			values = result['values']
 			#print('id, nome, rank, pontos')
 			for row in values:
 				if (row != []):
@@ -105,11 +106,12 @@ class googlesheets2:
 	def updatecomps(self, player):
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
 		result = sheet.values_get(COMPS_RANGE_NAME)
-		values = result['values']
 		
-		if not values:
+		
+		if not result:
 			range_name = "competitors!A2:K2"
 		else:
+			values = result['values']
 			i = 2
 			first_av = None
 			for row in values:
