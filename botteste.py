@@ -16,11 +16,11 @@ from discord.ext import commands
 sglobbyversionNumber = "1.3.1"
 tkrankversionNumber = "0.1"
 
-description = "Hello, I am a test bot, based on the tekken-discord-ranked.py v" + tkrankversionNumber + " by Tugaviciado, " + "and sglobbylink-discord.py v" + sglobbyversionNumber + " by Mr Peck (Modified by Tugaviciado for Python3.7).\n"
+description = "Hello, I am RankedBot v" + tkrankversionNumber + " by Tugaviciado. I'm a dedicated discord bot that focuses on supporting a local Tekken ranked system.\nHere are my commands:\n"
 tfile = open("token.txt")
 TOKEN = tfile.read()
 
-bot = commands.Bot(command_prefix='!', description=description, help_command = None)
+bot = commands.Bot(command_prefix='r!', description=description, help_command = None)
 
 compsdict = {}
 challenges = []
