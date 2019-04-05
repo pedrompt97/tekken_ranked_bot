@@ -35,12 +35,13 @@ class googlesheets2:
 		# Call the Sheets API
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
 		result = sheet.values_get(CHA_RANGE_NAME)
-		values = result['values']
+		
 		
 		chalist = []
-		if not values:
+		if 'values' not in result.keys():
 			print('Challenges: No data found.')
 		else:
+			values = result['values']
 			#print('id, nome, rank, pontos')
 			for row in values:
 				if (row != []):
@@ -79,9 +80,9 @@ class googlesheets2:
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
 		result = sheet.values_get(COMPS_RANGE_NAME)
 		
-		
+
 		compsdict = {}
-		if not result:
+		if 'values' not in result.keys():
 			print('Competitors: No data found.')
 		else:
 			values = result['values']
@@ -108,7 +109,7 @@ class googlesheets2:
 		result = sheet.values_get(COMPS_RANGE_NAME)
 		
 		
-		if not result:
+		if 'values' not in result.keys():
 			range_name = "competitors!A2:K2"
 		else:
 			values = result['values']
@@ -143,11 +144,12 @@ class googlesheets2:
 	def updatecha(self, challenge):
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
 		result = sheet.values_get(CHA_RANGE_NAME)
-		values = result['values']
 		
-		if not values:
+		
+		if 'values' not in result.keys():
 			range_name = "challenges!A2:J2"
 		else:
+			values = result['values']
 			i = 2
 			first_av = None
 			for row in values:
@@ -185,11 +187,12 @@ class googlesheets2:
 	def removecha(self, challenge):
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
 		result = sheet.values_get(CHA_RANGE_NAME)
-		values = result['values']
 		
-		if not values:
+		
+		if 'values' not in result.keys():
 			range_name = "challenges!A2:J2"
 		else:
+			values = result['values']
 			i = 2
 			first_av = None
 			for row in values:
