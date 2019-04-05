@@ -15,47 +15,27 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 # If modifying these scopes, delete the file token.pickle.
 #SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-scope = ['https://spreadsheets.google.com/feeds']
-creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
-client = gspread.authorize(creds)
+
 
 # The ID and range of a sample spreadsheet.
 SPREADSHEET_ID = '1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8'
-COMPS_RANGE_NAME = 'competitors!A2:K'
-CHA_RANGE_NAME = 'challenges!A2:J'
+COMPS_RANGE_NAME = 'Competitors!A2:K'
+CHA_RANGE_NAME = 'Challenges!A2:J'
 
-class googlesheets:
+class googlesheets2:
 	def __init__(self):
 		"""Shows basic usage of the Sheets API.
 		Prints values from a sample spreadsheet.
 		"""
-		creds = None
-		# The file token.pickle stores the user's access and refresh tokens, and is
-		# created automatically when the authorization flow completes for the first
-		# time.
-		if os.path.exists('token.pickle'):
-			with open('token.pickle', 'rb') as token:
-				creds = pickle.load(token)
-		# If there are no (valid) credentials available, let the user log in.
-		if not creds or not creds.valid:
-			if creds and creds.expired and creds.refresh_token:
-				creds.refresh(Request())
-			else:
-				flow = InstalledAppFlow.from_client_secrets_file(
-					'credentials.json', SCOPES)
-				creds = flow.run_local_server()
-			# Save the credentials for the next run
-			with open('token.pickle', 'wb') as token:
-				pickle.dump(creds, token)
-
-		self.service = build('sheets', 'v4', credentials=creds)
+		scope = ['https://spreadsheets.google.com/feeds']
+		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		self.client = gspread.authorize(creds)
 
 	def loadcha(self):
 		# Call the Sheets API
-		sheet = self.service.spreadsheets()
-		result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
-									range=CHA_RANGE_NAME).execute()
-		values = result.get('values', [])
+		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
+		result = sheet.values_get(CHA_RANGE_NAME)
+		values = result['values']
 		
 		chalist = []
 		if not values:
@@ -96,10 +76,9 @@ class googlesheets:
 		
 	def loadcomps(self):
 		# Call the Sheets API
-		sheet = self.service.spreadsheets()
-		result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
-									range=COMPS_RANGE_NAME).execute()
-		values = result.get('values', [])
+		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
+		result = sheet.values_get(COMPS_RANGE_NAME)
+		values = result['values']
 		
 		compsdict = {}
 		if not values:
@@ -124,11 +103,9 @@ class googlesheets:
 		return compsdict
 	
 	def updatecomps(self, player):
-		sheet = self.service.spreadsheets()
-		result = sheet.values().get(spreadsheetId=SPREADSHEET_ID,
-									range=COMPS_RANGE_NAME).execute()
-		
-		values = result.get('values', [])
+		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
+		result = sheet.values_get(COMPS_RANGE_NAME)
+		values = result['values']
 		
 		if not values:
 			range_name = "competitors!A2:K2"
@@ -157,15 +134,14 @@ class googlesheets:
 		body = {
 			'values': values
 		}
-		result = self.service.spreadsheets().values().update(
-			spreadsheetId=SPREADSHEET_ID, range=range_name,
-			valueInputOption='USER_ENTERED', body=body).execute()
+		params = {}
+		params['valueInputOption'] = 'USER_ENTERED'
+		result = sheet.values_update(range = range_name, body = body, params = params)
 
 	def updatecha(self, challenge):
-		sheet = self.service.spreadsheets()
-		result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=CHA_RANGE_NAME).execute()
-		
-		values = result.get('values',[])
+		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
+		result = sheet.values_get(CHA_RANGE_NAME)
+		values = result['values']
 		
 		if not values:
 			range_name = "challenges!A2:J2"
@@ -199,15 +175,15 @@ class googlesheets:
 		body = {
 			'values': values
 		}
-		result = self.service.spreadsheets().values().update(
-			spreadsheetId=SPREADSHEET_ID, range=range_name,
-			valueInputOption='USER_ENTERED', body=body).execute()
+		
+		params = {}
+		params['valueInputOption'] = 'USER_ENTERED'
+		result = sheet.values_update(range = range_name, body = body, params = params)
 			
 	def removecha(self, challenge):
-		sheet = self.service.spreadsheets()
-		result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range=CHA_RANGE_NAME).execute()
-		
-		values = result.get('values',[])
+		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
+		result = sheet.values_get(CHA_RANGE_NAME)
+		values = result['values']
 		
 		if not values:
 			range_name = "challenges!A2:J2"
@@ -236,9 +212,10 @@ class googlesheets:
 		body = {
 			'values': values
 		}
-		result = self.service.spreadsheets().values().update(
-			spreadsheetId=SPREADSHEET_ID, range=range_name,
-			valueInputOption='USER_ENTERED', body=body).execute()
+		
+		params = {}
+		params['valueInputOption'] = 'USER_ENTERED'
+		result = sheet.values_update(range = range_name, body = body, params = params)
 			
 if __name__ == '__main__':
 	gsheet = googlesheets()

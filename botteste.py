@@ -6,7 +6,7 @@ import discord
 import csv
 import datetime
 from sglobby import lobbies
-from googlesheets import googlesheets
+from googlesheets2 import googlesheets2 as googlesheets
 from competitors import competitor
 from challengecs import challengec
 

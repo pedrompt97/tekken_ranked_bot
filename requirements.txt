@@ -5,8 +5,10 @@ setuptools
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
-gspread
 oauth2client
+gspread
 asyncio
 async-timeout
+aiohttp
+websockets
 https://github.com/Rapptz/discord.py/archive/rewrite.zip
