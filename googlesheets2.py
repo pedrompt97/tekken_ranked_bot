@@ -33,6 +33,9 @@ class googlesheets2:
 
 	def loadcha(self):
 		# Call the Sheets API
+		scope = ['https://spreadsheets.google.com/feeds']
+		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		self.client = gspread.authorize(creds)
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
 		result = sheet.values_get(CHA_RANGE_NAME)
 		
@@ -77,6 +80,9 @@ class googlesheets2:
 		
 	def loadcomps(self):
 		# Call the Sheets API
+		scope = ['https://spreadsheets.google.com/feeds']
+		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		self.client = gspread.authorize(creds)
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
 		result = sheet.values_get(COMPS_RANGE_NAME)
 		
@@ -105,6 +111,9 @@ class googlesheets2:
 		return compsdict
 	
 	def updatecomps(self, player):
+		scope = ['https://spreadsheets.google.com/feeds']
+		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		self.client = gspread.authorize(creds)
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
 		result = sheet.values_get(COMPS_RANGE_NAME)
 		
@@ -142,6 +151,9 @@ class googlesheets2:
 		result = sheet.values_update(range = range_name, body = body, params = params)
 
 	def updatecha(self, challenge):
+		scope = ['https://spreadsheets.google.com/feeds']
+		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		self.client = gspread.authorize(creds)
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
 		result = sheet.values_get(CHA_RANGE_NAME)
 		
@@ -185,6 +197,9 @@ class googlesheets2:
 		result = sheet.values_update(range = range_name, body = body, params = params)
 			
 	def removecha(self, challenge):
+		scope = ['https://spreadsheets.google.com/feeds']
+		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
+		self.client = gspread.authorize(creds)
 		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
 		result = sheet.values_get(CHA_RANGE_NAME)
 		
