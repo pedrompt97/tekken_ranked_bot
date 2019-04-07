@@ -137,7 +137,7 @@ async def check_challenges():
 								await loser.add_roles(role)
 					
 					
-		await asyncio.sleep(5) # task runs every 24 hours
+		await asyncio.sleep(60*60*24) # task runs every 24 hours
 		
 async def check_competitors():
 	await bot.wait_until_ready()
@@ -320,8 +320,7 @@ class rankeds(commands.Cog):
 			comp = competitor(id = author.id, nome = str(author.name), pc = pc, ps4 = ps4, xbox = xbox)
 			compsdict[int(comp.id)] = comp
 			spreadsheet.updatecomps(comp)
-			await ctx.send('Registration done:\nName: {0.name}\nID: {0.id}\nRank: {1.rank} - '.format(author,comp) + str(comp.rankconv()) + "\n\nPlatforms: " + newplat, delete_after=10)
-			role = comp.ranktorole(ctx.channel)
+			await ctx.send('__**Registration Done**__\n\n**Name:** {0.name}\n**ID:** {0.id}\n**Rank:** {1.rank} - '.format(author,comp) + str(comp.rankconv()) + "\n**Platforms:** " + newplat, delete_after=10)
 			await author.add_roles(role)
 		else:
 			com = compsdict[int(author.id)]
@@ -348,9 +347,9 @@ class rankeds(commands.Cog):
 		
 		if int(author.id) in compsdict.keys():
 			comp = compsdict[int(author.id)]
-			await ctx.send('Competitor Info:\nName: {0.nome}\n\nRank {0.rank} - '.format(comp) + str(comp.rankconv()) + '\n{0.pontos} points'.format(comp), delete_after=10)
+			await ctx.send('__**Competitor Info**__\n**Name:** {0.nome}\n**Rank {0.rank}:** '.format(comp) + str(comp.rankconv()) + '\n**Points:** {0.pontos}'.format(comp), delete_after=60)
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author), delete_after=10)
+			await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author), delete_after=10)
 	
 	#get a list of players of similar ranks
 	@commands.command()
@@ -358,7 +357,7 @@ class rankeds(commands.Cog):
 		author = ctx.message.author
 		await ctx.message.delete()
 		
-		
+		numops = 0
 		if int(author.id) in compsdict.keys():
 			me = compsdict[int(author.id)]
 			
@@ -367,6 +366,7 @@ class rankeds(commands.Cog):
 			for i,v in compsdict.items():
 				if v.rank == me.rank and v.id != me.id:
 					msg += '{0.name}\n'.format(discord.utils.find(lambda m: m.id == v.id, ctx.channel.guild.members))
+					numops += 1
 			
 			msg += "\n\n**Players one rank higher than {0.name}**\n".format(author)
 			
@@ -374,11 +374,16 @@ class rankeds(commands.Cog):
 			for i,v in compsdict.items():
 				if v.rank == (me.rank)+1 and v.id != me.id:
 					msg += '{0.name}\n'.format(discord.utils.find(lambda m: m.id == v.id, ctx.channel.guild.members))
+					numops +=1
 		
+			if numops < 2:
+				me.nonearrrank = True
+				msg += "\nNo competitors found in a near rank. {0.name}, you're free to challenge anyone you want.".format(author)
+				
 			await ctx.send(msg)
 			
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author), delete_after=10)
+			await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author), delete_after=10)
 			
 	
 	#challenge a player
@@ -388,7 +393,7 @@ class rankeds(commands.Cog):
 		await ctx.message.delete()
 		
 		if user is None:
-			await ctx.send('{0.name}, wrong command. To challenge someone, type !challenge <mention_to_player>, eg. !challenge {0.mention}'.format(author), delete_after=10)
+			await ctx.send('{0.name}, wrong command. To challenge someone, type r!challenge <mention_to_player>, eg. r!challenge {0.mention}'.format(author), delete_after=10)
 			return
 			
 		elif user == author:
@@ -402,21 +407,33 @@ class rankeds(commands.Cog):
 				initchallenger = compsdict[int(newchal.challengerid)]
 				newchal.updateusers(challenger = initchallenger, challenged = initchallenged)
 				
+				nearrank = 0
+				for i,v in compsdict.items():
+					if  (newchal.challenger.rank) <= v.rank <= (newchal.challenger.rank)+1 and v.id != newchal.challenger.id:
+						nearrank += 1
+						
+				if nearrank < 2:
+					newchal.challenger.nonearrrank = True
+				
 				if int(newchal.challenger.lastop) == int(newchal.challenged.id):
 					await ctx.send('{0.name}, your last game was with {1.name}. Challenge someone else'.format(author,user))
-					return
+					newchal.challenger.nonearrrank = False
+					return		
 				
 				rankdif = abs(newchal.challenger.rank - newchal.challenged.rank)
-				if rankdif > 1:
+				if rankdif > 1 and not newchal.challenger.nonearrrank:
 					await ctx.send('{0.name}, {1.name} is 2 or more ranks apart from you. Challenge someone with a closer rank.'.format(author, user))
+					newchal.challenger.nonearrrank = False
 					return
 				elif newchal.challenger.rank > newchal.challenged.rank:
 					await ctx.send('{0.name}, your rank is highter than {1.name}. Challenge someone of the same rank or higher'.format(author, user))
+					newchal.challenger.nonearrrank = False
 					return
 					
 				for i in challenges:
 					if ((newchal.challenger == i.challenger and newchal.challenged == i.challenged) or (newchal.challenged == i.challenger and newchal.challenger == i.challenged)):
 						await ctx.send('{0.name}, there is already a challenge between you and {1.name}'.format(author,user))
+						newchal.challenger.nonearrrank = False
 						return
 				challenges.append(newchal)
 				spreadsheet.updatecha(newchal)
@@ -424,9 +441,9 @@ class rankeds(commands.Cog):
 			else:
 				await ctx.send('{0.name} is not a registered member'.format(user), delete_after=10)
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author), delete_after=10)
-			
-	
+				await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author), delete_after=10)
+		
+		newchal.challenger.nonearrrank = False		
 	
 	#list own challenges
 	@commands.command()
@@ -468,7 +485,7 @@ class rankeds(commands.Cog):
 			await ctx.send(answer)	
 			
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author))
+			await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author))
 			
 	#list own games
 	@commands.command()
@@ -491,7 +508,7 @@ class rankeds(commands.Cog):
 			else:
 				await ctx.send("{0.name}, you have games to play:\n".format(author) + mes)
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author))
+				await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author))
 			
 			
 	#accept challenge - needs an id obtained through mychallenges
@@ -500,7 +517,7 @@ class rankeds(commands.Cog):
 		await ctx.message.delete()
 		author = ctx.message.author
 		if matchid is None:
-			await ctx.send('{0.name}, you command is invalid. To accept a challenge, type !accept <challenge_number>'.format(author), delete_after=10)
+			await ctx.send('{0.name}, you command is invalid. To accept a challenge, type r!accept <challenge_number>'.format(author), delete_after=10)
 			return
 
 		if int(author.id) in compsdict.keys():
@@ -515,7 +532,7 @@ class rankeds(commands.Cog):
 			spreadsheet.updatecha(cha)
 					
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author))
+			await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author))
 			
 	@commands.command()
 	async def report(self, ctx, matchid: int, result : str):
@@ -591,7 +608,7 @@ class rankeds(commands.Cog):
 			else:
 				await ctx.send('{0.name}, that game was not accepted yet. You can\'t report an unaccepted game'.format(author))
 		else:
-			await ctx.send('{0.name}, you are not a registered member. To register, type !register'.format(author))
+			await ctx.send('{0.name}, you are not a registered member.\n\nTo register, type r!register <platform(s)>.'.format(author))
 		
 			
 bot.add_cog(rankeds(bot))

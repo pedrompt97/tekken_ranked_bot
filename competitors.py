@@ -19,6 +19,7 @@ class competitor:
 	pc = None
 	ps4 = None
 	xbox = None
+	nonearrrank = None
 	
 	def __init__(self, id = 0, nome = "", rank = 1, pontos = 0, lastop = -1, games = 0, wins = 0, warns = 0, pc = False, ps4 = False, xbox = False):
 		self.id = int(id)
@@ -32,6 +33,7 @@ class competitor:
 		self.pc = pc
 		self.ps4 = ps4
 		self.xbox = xbox
+		self.nonearrank = False
 		
 	def getrank(self):
 		return self.rank
@@ -47,33 +49,33 @@ class competitor:
 		
 	def rankconv(self):
 		if self.rank == 1:
-			return "Rank 1 Beginner"
+			return "Beginner"
 		elif self.rank == 2:
-			return "Rank 2 Silver"
+			return "Silver"
 		elif self.rank == 3:
-			return "Rank 3 Light Blue"
+			return "Light Blue"
 		elif self.rank == 4:
-			return "Rank 4 Green"
+			return "Green"
 		elif self.rank == 5:
-			return "Rank 5 Yellow"
+			return "Yellow"
 		elif self.rank == 6:
-			return "Rank 6 Orange"
+			return "Orange"
 		elif self.rank == 7:
-			return "Rank 7 Red"
+			return "Red"
 		elif self.rank == 8:
-			return "Rank 8 Purple"
+			return "Purple"
 		elif self.rank == 9:
-			return "Rank 9 True Blue"
+			return "True Blue"
 		elif self.rank == 10:
-			return "Rank 10 Emperor"
+			return "Emperor"
 		elif self.rank == 11:
-			return "Rank 11 Tekken King"
+			return "Tekken King"
 		elif self.rank == 12:
-			return "Rank 12 Tekken God"
+			return "Tekken God"
 		elif self.rank == 13:
-			return "Rank 13 True Tekken God"
+			return "True Tekken God"
 		elif self.rank == 14:
-			return "Rank 14 Tekken God Prime"
+			return "Tekken God Prime"
 		else:
 			return "Undefined"
 			
