@@ -18,7 +18,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 
 # The ID and range of a sample spreadsheet.
-SPREADSHEET_ID = '1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8'
+SPREADSHEET_ID = 'PUT ID HERE'
 COMPS_RANGE_NAME = 'Competitors!A2:K'
 CHA_RANGE_NAME = 'Challenges!A2:J'
 
@@ -36,7 +36,7 @@ class googlesheets2:
 		scope = ['https://spreadsheets.google.com/feeds']
 		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 		self.client = gspread.authorize(creds)
-		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
+		sheet = self.client.open_by_url(SPREADSHEET_ID)
 		result = sheet.values_get(CHA_RANGE_NAME)
 		
 		
@@ -83,7 +83,7 @@ class googlesheets2:
 		scope = ['https://spreadsheets.google.com/feeds']
 		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 		self.client = gspread.authorize(creds)
-		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
+		sheet = self.client.open_by_url(SPREADSHEET_ID)
 		result = sheet.values_get(COMPS_RANGE_NAME)
 		
 
@@ -114,7 +114,7 @@ class googlesheets2:
 		scope = ['https://spreadsheets.google.com/feeds']
 		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 		self.client = gspread.authorize(creds)
-		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=2069009913")
+		sheet = self.client.open_by_url(SPREADSHEET_ID)
 		result = sheet.values_get(COMPS_RANGE_NAME)
 		
 		
@@ -154,7 +154,7 @@ class googlesheets2:
 		scope = ['https://spreadsheets.google.com/feeds']
 		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 		self.client = gspread.authorize(creds)
-		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
+		sheet = self.client.open_by_url(SPREADSHEET_ID)
 		result = sheet.values_get(CHA_RANGE_NAME)
 		
 		
@@ -200,7 +200,7 @@ class googlesheets2:
 		scope = ['https://spreadsheets.google.com/feeds']
 		creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', scope)
 		self.client = gspread.authorize(creds)
-		sheet = self.client.open_by_url("https://docs.google.com/spreadsheets/d/1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8/edit#gid=1912482006")
+		sheet = self.client.open_by_url(SPREADSHEET_ID)
 		result = sheet.values_get(CHA_RANGE_NAME)
 		
 		
