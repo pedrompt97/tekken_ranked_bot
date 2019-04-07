@@ -20,7 +20,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('client_secret.json', s
 client = gspread.authorize(creds)
 
 # The ID and range of a sample spreadsheet.
-SPREADSHEET_ID = '1YR4zEnhQM9JJRNoBh7q_tkmBpLDaz80uYPEOzYi94s8'
+SPREADSHEET_ID = 'PUT ID HERE'
 COMPS_RANGE_NAME = 'competitors!A2:K'
 CHA_RANGE_NAME = 'challenges!A2:J'
 
